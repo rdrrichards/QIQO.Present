@@ -13,7 +13,7 @@ export class ImgViewerComponent implements OnInit {
   constructor(private imgViewerService: ImgViewerService, private sanitizer: DomSanitizer) { }
 
   ngOnInit() {
-    this.url = this.sanitizer.bypassSecurityTrustResourceUrl('http://localhost:4200/home');
+    // this.url = this.sanitizer.bypassSecurityTrustResourceUrl('http://localhost:4200/home');
     receiver.receiverReady();
   }
   // @HostListener('DOMContentLoaded') domLoaded() {

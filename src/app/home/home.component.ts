@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import * as controller from '../../assets/presentationController';
 
 @Component({
   selector: 'app-home',
@@ -11,5 +12,12 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
   }
-
+  startPresentation() {
+    controller.startPresentationRequest('http://localhost:4200/img-viewer');
+  }
+  changePresentation() {
+    const message = { url: '/assets/start.html'};
+    const lang = document.body.lang || 'en-US';
+    controller.sendMessage(JSON.stringify({message, lang}));
+  }
 }

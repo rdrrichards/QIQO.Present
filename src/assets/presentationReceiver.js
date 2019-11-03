@@ -1,5 +1,6 @@
 
 export function receiverReady() {
+  console.log('receiverReady', navigator.presentation.receiver);
   document.addEventListener('DOMContentLoaded', function() {
     if (navigator.presentation.receiver) {
       navigator.presentation.receiver.connectionList.then(list => {
@@ -13,10 +14,12 @@ export function receiverReady() {
 }
 
 export function addConnection(connection) {
-  connection.connectionId = ++connectionIdx;
-  addMessage('New connection #' + connectionIdx);
+  console.log('addConnection connection.connectionId', connection.id);
+  // connection.connectionId = ++connectionIdx;
+  // addMessage('New connection #' + connectionIdx);
 
   connection.addEventListener('message', function(event) {
+    console.log('message receiver event', event);
     const data = JSON.parse(event.data);
     // const logString = 'Message ' + messageIdx + ' from connection #' +
     //     connection.connectionId + ': ' + data.message;

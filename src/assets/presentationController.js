@@ -1,6 +1,6 @@
 let presentationRequest;
 
-function createPresentationRequest(url) {
+export function createPresentationRequest(url) {
   presentationRequest = new PresentationRequest([url]);
   presentationRequest.getAvailability()
   .then(availability => {
@@ -20,7 +20,7 @@ navigator.presentation.defaultRequest = presentationRequest;
 
 let presentationConnection;
 
-function startPresentationRequest(url) {
+export function startPresentationRequest(url) {
   console.log('Starting presentation request...');
   if (!presentationRequest) {
     createPresentationRequest(url);
@@ -50,23 +50,23 @@ function wirePresentationRequest() {
   });
 }
 
-function sendMessage(thing) {
+export function sendMessage(thing) {
   const lang = document.body.lang || 'en-US';
   console.log('Sending "' + JSON.stringify(thing) + '"...');
   presentationConnection.send(JSON.stringify({thing, lang}));
 }
 
-function closePresentationRequest() {
+export function closePresentationRequest() {
   console.log('Closing connection...');
   presentationConnection.close();
 }
 
-function terminatePresentationRequest() {
+export function terminatePresentationRequest() {
   console.log('Terminating connection...');
   presentationConnection.terminate();
 }
 
-function reconnect() {
+export function reconnect() {
   const presentationId = localStorage.getItem('presentationId');
   presentationRequest.reconnect(presentationId)
     .then(connection => {
