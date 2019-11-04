@@ -52,7 +52,7 @@ function wirePresentationRequest() {
 
 export function sendMessage(thing) {
   const lang = document.body.lang || 'en-US';
-  console.log('Sending "' + JSON.stringify(thing) + '"...');
+  console.log('Sending', JSON.stringify(thing));
   presentationConnection.send(JSON.stringify({thing, lang}));
 }
 

@@ -1,7 +1,7 @@
 
 export function receiverReady() {
   console.log('receiverReady', navigator.presentation.receiver);
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('onloaded', function() {
     if (navigator.presentation.receiver) {
       navigator.presentation.receiver.connectionList.then(list => {
         list.connections.map(connection => addConnection(connection));

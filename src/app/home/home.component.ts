@@ -17,7 +17,6 @@ export class HomeComponent implements OnInit {
   }
   changePresentation() {
     const message = { url: '/assets/start.html'};
-    const lang = document.body.lang || 'en-US';
-    controller.sendMessage(JSON.stringify({message, lang}));
+    controller.sendMessage(message);
   }
 }
