@@ -1,7 +1,10 @@
 let presentationRequest;
+let presentationConnection;
 
 export function createPresentationRequest(url) {
   presentationRequest = new PresentationRequest([url]);
+  // Make this presentation the default one when using the "Cast" browser menu.
+  navigator.presentation.defaultRequest = presentationRequest;
   presentationRequest.getAvailability()
   .then(availability => {
     console.log('Available presentation displays: ' + availability.value);
@@ -14,11 +17,6 @@ export function createPresentationRequest(url) {
         error.message);
   });
 }
-
-// Make this presentation the default one when using the "Cast" browser menu.
-navigator.presentation.defaultRequest = presentationRequest;
-
-let presentationConnection;
 
 export function startPresentationRequest(url) {
   console.log('Starting presentation request...');
