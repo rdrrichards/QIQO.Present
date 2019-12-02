@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 
+const key = 'presentationId';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -7,24 +9,8 @@ export class PresentationControllerService {
   presentationRequest: any;
   presentationConnection: any;
   constructor() { }
-  createPresentationRequest(url) {
-    this.presentationRequest = new PresentationRequest([url]);
-    // Make this presentation the default one when using the "Cast" browser menu.
-    navigator.presentation.defaultRequest = this.presentationRequest;
-    this.presentationRequest.getAvailability()
-      .then(availability => {
-        console.log('Available presentation displays: ' + availability.value);
-        availability.addEventListener('change', () => {
-          console.log('> Available presentation displays: ' + availability.value);
-        });
-      })
-      .catch(error => {
-        console.log('Presentation availability not supported, ' + error.name + ': ' +
-          error.message);
-      });
-  }
 
-  startPresentationRequest(url) {
+  startPresentationRequest(url: string) {
     console.log('Starting presentation request...');
     if (!this.presentationRequest) {
       this.createPresentationRequest(url);
@@ -33,9 +19,28 @@ export class PresentationControllerService {
     this.presentationRequest.start()
       .then(connection => {
         console.log('> Connected to ' + connection.url + ', id: ' + connection.id);
+        console.log('> Connected now connection info: ', connection);
+        localStorage.setItem(key, connection.id);
+        console.log('> startPresentationRequest navigator.presentation: ', navigator.presentation);
       })
       .catch(error => {
         console.log('> ' + error.name + ': ' + error.message);
+      });
+  }
+  createPresentationRequest(url: string) {
+    this.presentationRequest = new PresentationRequest([url]);
+    // Make this presentation the default one when using the "Cast" browser menu.
+    navigator.presentation.defaultRequest = this.presentationRequest;
+    this.presentationRequest.getAvailability()
+      .then(availability => {
+        availability.addEventListener('change', () => {
+          console.log('> Available presentation displays: ' + availability.value);
+          console.log('> createPresentationRequest navigator.presentation: ', navigator.presentation);
+        });
+      })
+      .catch(error => {
+        console.log('Presentation availability not supported, ' + error.name + ': ' +
+          error.message);
       });
   }
 
@@ -51,10 +56,12 @@ export class PresentationControllerService {
       this.presentationConnection.addEventListener('message', (evnt: any) => {
         console.log('> ' + evnt.data);
       });
+      console.log('> wirePresentationRequest this.presentationRequest info: ', this.presentationRequest);
+      console.log('> wirePresentationRequest navigator.presentation: ', navigator.presentation);
     });
   }
 
-  sendMessage(thing) {
+  sendMessage(thing: any) {
     const lang = document.body.lang || 'en-US';
     console.log('Sending', JSON.stringify(thing));
     this.presentationConnection.send(JSON.stringify({ thing, lang }));
@@ -71,7 +78,7 @@ export class PresentationControllerService {
   }
 
   reconnect() {
-    const presentationId = localStorage.getItem('presentationId');
+    const presentationId = localStorage.getItem(key);
     this.presentationRequest.reconnect(presentationId)
       .then(connection => {
         console.log('Reconnected to ' + connection.id);

@@ -16,6 +16,9 @@ export class ImgViewerComponent implements OnInit {
   ngOnInit() {
     // this.url = this.sanitizer.bypassSecurityTrustResourceUrl('http://localhost:4200/home');
     this.presentationReceiverService.receiverReady();
+    this.presentationReceiverService.url$.subscribe(u =>
+      this.url = this.sanitizer.bypassSecurityTrustResourceUrl(u)
+      );
   }
   // @HostListener('DOMContentLoaded') domLoaded() {
   //   console.log('domLoaded', window.navigator.presentation.defaultRequest);

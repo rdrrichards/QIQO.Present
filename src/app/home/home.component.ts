@@ -20,4 +20,8 @@ export class HomeComponent implements OnInit {
     const message = { url: '/assets/start.html'};
     this.presentationControllerServive.sendMessage(message);
   }
+  changePresentationAgain() {
+    const message = { url: '/assets/end.html'};
+    this.presentationControllerServive.sendMessage(message);
+  }
 }

@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PresentationReceiverService {
+  private urlSubject: Subject<string> = new Subject<string>();
+  url$ = this.urlSubject.asObservable();
 
   constructor() {
     document.addEventListener('DOMContentLoaded', () => {
@@ -46,6 +49,7 @@ export class PresentationReceiverService {
 
   addConnection(connection) {
     console.log('addConnection connection.connectionId', connection.id);
+    console.log('addConnection navigator.presentation', navigator.presentation);
     // connection.connectionId = ++connectionIdx;
     // addMessage('New connection #' + connectionIdx);
 
@@ -57,6 +61,7 @@ export class PresentationReceiverService {
       if (data.thing.url) {
         // window.location = data.thing.url;
         console.log('we need to show this: ', data.thing.url);
+        this.urlSubject.next(data.thing.url);
       }
       connection.send('Received message ' + data.thing.url);
     });
@@ -65,5 +70,5 @@ export class PresentationReceiverService {
     //   addMessage('Connection #' + connection.connectionId + ' closed, reason = ' +
     //       event.reason + ', message = ' + event.message);
     // });
-  };
+  }
 }
