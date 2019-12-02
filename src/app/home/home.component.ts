@@ -7,13 +7,11 @@ import { PresentationControllerService } from '../slide-viewer/presentation-cont
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  presentationRequest;
   constructor(private presentationControllerServive: PresentationControllerService) { }
 
   ngOnInit() {
   }
-  startPresentation(url) {
-    this.presentationRequest = new PresentationRequest([url]);
+  startPresentation(url: string = null) {
     this.presentationControllerServive.startPresentationRequest('http://localhost:4200/img-viewer');
   }
   changePresentation() {
