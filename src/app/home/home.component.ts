@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-// import * as controller from '../../assets/presentationController';
+import { PresentationControllerService } from '../slide-viewer/presentation-controller.service';
 
 @Component({
   selector: 'app-home',
@@ -7,17 +7,17 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-presentationRequest;
-  constructor() { }
+  presentationRequest;
+  constructor(private presentationControllerServive: PresentationControllerService) { }
 
   ngOnInit() {
   }
   startPresentation(url) {
     this.presentationRequest = new PresentationRequest([url]);
-    // controller.startPresentationRequest('http://localhost:4200/img-viewer');
+    this.presentationControllerServive.startPresentationRequest('http://localhost:4200/img-viewer');
   }
   changePresentation() {
     const message = { url: '/assets/start.html'};
-    // controller.sendMessage(message);
+    this.presentationControllerServive.sendMessage(message);
   }
 }
