@@ -6,67 +6,91 @@ const key = 'presentationId';
   providedIn: 'root'
 })
 export class PresentationControllerService {
-  presentationRequest: any;
   presentationConnection: any;
   constructor() { }
 
   startPresentationRequest(url: string) {
-    console.log('Starting presentation request...');
-    if (!this.presentationRequest) {
+    if (!navigator.presentation.defaultRequest) {
       this.createPresentationRequest(url);
-      this.wirePresentationRequest();
+      console.log('Starting presentation request...');
+      this.present();
+    } else if (!this.presentationConnection) {
+      this.reconnect();
     }
-    this.presentationRequest.start()
-      .then(connection => {
-        console.log('> Connected to ' + connection.url + ', id: ' + connection.id);
-        console.log('> Connected now connection info: ', connection);
-        localStorage.setItem(key, connection.id);
-        console.log('> startPresentationRequest navigator.presentation: ', navigator.presentation);
-      })
-      .catch(error => {
-        console.log('> ' + error.name + ': ' + error.message);
-      });
   }
   createPresentationRequest(url: string) {
-    this.presentationRequest = new PresentationRequest([url]);
     // Make this presentation the default one when using the "Cast" browser menu.
-    navigator.presentation.defaultRequest = this.presentationRequest;
-    this.presentationRequest.getAvailability()
-      .then(availability => {
-        availability.addEventListener('change', () => {
-          console.log('> Available presentation displays: ' + availability.value);
-          console.log('> createPresentationRequest navigator.presentation: ', navigator.presentation);
-        });
-      })
-      .catch(error => {
-        console.log('Presentation availability not supported, ' + error.name + ': ' +
-          error.message);
-      });
+    navigator.presentation.defaultRequest = new PresentationRequest([url]); // this.presentationRequest;
+    // navigator.presentation.defaultRequest.onconnectionavailable = event => {
+    //   console.log('onconnectionavailable event', event);
+    //   this.setConnection(event.connection);
+    // };
   }
-
-  wirePresentationRequest() {
-    this.presentationRequest.addEventListener('connectionavailable', (event: any) => {
-      this.presentationConnection = event.connection;
-      this.presentationConnection.addEventListener('close', () => {
-        console.log('> Connection closed.');
-      });
-      this.presentationConnection.addEventListener('terminate', () => {
-        console.log('> Connection terminated.');
-      });
-      this.presentationConnection.addEventListener('message', (evnt: any) => {
-        console.log('> ' + evnt.data);
-      });
-      console.log('> wirePresentationRequest this.presentationRequest info: ', this.presentationRequest);
-      console.log('> wirePresentationRequest navigator.presentation: ', navigator.presentation);
+  present() {
+    navigator.presentation.defaultRequest.start()
+    .then(connection => {
+      this.setConnection(connection);
+      // console.log('> Connected to ' + connection.url + ', id: ' + connection.id);
+    })
+    .catch(error => {
+      console.log('> ' + error.name + ': ' + error.message);
     });
   }
-
   sendMessage(thing: any) {
     const lang = document.body.lang || 'en-US';
     console.log('Sending', JSON.stringify(thing));
     this.presentationConnection.send(JSON.stringify({ thing, lang }));
   }
+  reconnect() {
+    const presentationId = localStorage.getItem(key);
+    if (presentationId) {
+      navigator.presentation.defaultRequest.reconnect(presentationId)
+        .then(connection => {
+          console.log('Reconnected to ' + connection.id);
+          this.setConnection(connection);
+        })
+        .catch(error => {
+          console.log('Presentation.reconnect() error, ' + error.name + ': ' + error.message);
+        });
+    } else {
+      this.present();
+    }
+  }
+  setConnection(newConnection) {
+    // Disconnect from existing presentation, if not attempting to reconnect
+    if (this.presentationConnection && this.presentationConnection !== newConnection && this.presentationConnection.state !== 'closed') {
+      this.presentationConnection.onclosed = undefined;
+      this.presentationConnection.close();
+    }
 
+    // Set the new connection and save the presentation ID
+    this.presentationConnection = newConnection;
+    // localStorage["presId"] = this.connection.id;
+    localStorage.setItem(key, this.presentationConnection.id);
+
+    // Monitor the connection state
+    this.presentationConnection.onconnect = _ => {
+        // Register message handler
+        this.presentationConnection.onmessage = message => {
+            console.log(`Received message: ${message.data}`);
+        };
+
+        // Send initial message to presentation page
+        this.presentationConnection.send('Say hello');
+    };
+
+    this.presentationConnection.onclose = _ => {
+      this.presentationConnection = null;
+      console.log('Connection closed');
+    };
+
+    this.presentationConnection.onterminate = _ => {
+        // Remove from localStorage if exists
+        localStorage.removeItem(key);
+        this.presentationConnection = null;
+        console.log('Connection Terminated');
+    };
+  }
   closePresentationRequest() {
     console.log('Closing connection...');
     this.presentationConnection.close();
@@ -75,16 +99,5 @@ export class PresentationControllerService {
   terminatePresentationRequest() {
     console.log('Terminating connection...');
     this.presentationConnection.terminate();
-  }
-
-  reconnect() {
-    const presentationId = localStorage.getItem(key);
-    this.presentationRequest.reconnect(presentationId)
-      .then(connection => {
-        console.log('Reconnected to ' + connection.id);
-      })
-      .catch(error => {
-        console.log('Presentation.reconnect() error, ' + error.name + ': ' + error.message);
-      });
   }
 }
