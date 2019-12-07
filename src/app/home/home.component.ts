@@ -32,4 +32,7 @@ export class HomeComponent implements OnInit {
   termPresentation() {
     this.presentationControllerServive.terminatePresentationRequest();
   }
+  openApp() {
+    location.href = 'PHC:123456;11-11-123456;GRM;RR1';
+  }
 }
