@@ -11,7 +11,9 @@ import { PresentationReceiverService } from '../slide-viewer/presentation-receiv
 export class ImgViewerComponent implements OnInit {
   url: SafeResourceUrl;
   constructor(private presentationReceiverService: PresentationReceiverService,
-              private imgViewerService: ImgViewerService, private sanitizer: DomSanitizer) { }
+              private imgViewerService: ImgViewerService, private sanitizer: DomSanitizer) {
+                this.url = this.sanitizer.bypassSecurityTrustResourceUrl('http://localhost:4200/home');
+              }
 
   ngOnInit() {
     // this.url = this.sanitizer.bypassSecurityTrustResourceUrl('http://localhost:4200/home');
