@@ -14,8 +14,8 @@ export class HomeComponent implements OnInit {
   }
 
   async ngOnInit() {
-    // const screens = await window.getScreens();
-
+    const screens = await window.getScreens();
+    console.log('screens', screens);
     // for (const screen of screens) {
     //   // Properties specified in https://www.w3.org/TR/cssom-view/#screen
     //   console.log(screen.width);         // 1680
