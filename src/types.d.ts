@@ -6,4 +6,5 @@ interface Navigator {
 
 interface Window {
   getScreens(): any;
+  isMultiScreen(): Promise<boolean>;
 }
