@@ -40,17 +40,15 @@ export class HomeComponent implements OnInit {
       console.log('screens', screens);
       // The Multi-Screen Window Placement API is supported.
       let granted = false;
-      const ms = await window.isMultiScreen();
-      console.log('isMultiScreen', ms);
       try {
         const { state } = await navigator.permissions.query({ name: 'window-placement' } as any);
         granted = state === 'granted';
       } catch {
         // Nothing.
       }
-      if (granted && ms) {
+      if (granted && screens.screens.length > 0) {
         try {
-          const primaryScreen = screens.filter((screen) => !screen.primary && screen.availWidth >= 2560)[0];
+          const primaryScreen = screens.screens.filter((screen) => screen.availWidth >= 2560)[0];
           console.log('primaryScreen', primaryScreen);
           await document.body.requestFullscreen({ screen: primaryScreen } as FullscreenOptions);
         } catch (err) {
