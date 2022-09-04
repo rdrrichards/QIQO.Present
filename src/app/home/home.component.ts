@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { PresentationControllerService } from '../slide-viewer/presentation-controller.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
@@ -7,16 +7,12 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit, AfterViewInit {
+export class HomeComponent {
   phcLink: SafeResourceUrl;
   constructor(private presentationControllerServive: PresentationControllerService, private sanitizer: DomSanitizer) {
     this.phcLink = this.sanitizer.bypassSecurityTrustResourceUrl('PHC:123456;11-11-123456;GRM;RR1');
   }
-  async ngAfterViewInit() {
-    await this.multiScreen();
-  }
 
-  ngOnInit() {  }
   startPresentation(url: string = null) {
     this.presentationControllerServive.startPresentationRequest('http://localhost:4200/img-viewer');
   }
@@ -37,27 +33,36 @@ export class HomeComponent implements OnInit, AfterViewInit {
   openApp() {
     location.href = 'PHC:123456;11-11-123456;GRM;RR1';
   }
-  async multiScreen() {
-    if ('getScreens' in window) {
-      const screens = await window.getScreens();
-      console.log('screens', screens);
-      // The Multi-Screen Window Placement API is supported.
-      let granted = false;
-      try {
-        const { state } = await navigator.permissions.query({ name: 'window-placement' } as any);
-        granted = state === 'granted';
-      } catch {
-        // Nothing.
-      }
-      if (granted && screens.screens.length > 0) {
-        try {
-          const primaryScreen = screens.screens.filter((screen) => screen.availWidth >= 2560)[0];
-          console.log('primaryScreen', primaryScreen);
-          await document.body.requestFullscreen({ screen: primaryScreen } as FullscreenOptions);
-        } catch (err) {
-          console.error(err.name, err.message, err);
-        }
-      }
-    }
+  multiScreen() {
+    const viewerWindow = window.open('http://localhost:4201?url=http://localhost:4244','targetWindow',
+                                  `toolbar=no,
+                                  location=no,
+                                  status=no,
+                                  menubar=no,
+                                  scrollbars=yes,
+                                  resizable=yes,
+                                  width=500,
+                                  height=500`)
+    // if (window.screen.isExtended) {
+    //   const screens = await window.getScreenDetails();
+    //   console.log('screens', screens);
+    //   // The Multi-Screen Window Placement API is supported.
+    //   let granted = false;
+    //   try {
+    //     const { state } = await navigator.permissions.query({ name: 'window-placement' } as any);
+    //     granted = state === 'granted';
+    //   } catch {
+    //     // Nothing.
+    //   }
+    //   if (granted && screens.screens.length > 0) {
+    //     try {
+    //       const primaryScreen = screens.screens.filter((screen) => screen.availWidth >= 2560)[0];
+    //       console.log('primaryScreen', primaryScreen);
+    //       await document.body.requestFullscreen({ screen: primaryScreen } as FullscreenOptions);
+    //     } catch (err) {
+    //       console.error('ERROR!', err.name, err.message, err);
+    //     }
+    //   }
+    // }
   }
 }

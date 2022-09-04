@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ImgViewerService } from './img-viewer.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PresentationReceiverService } from '../slide-viewer/presentation-receiver.service';

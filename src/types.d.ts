@@ -5,6 +5,14 @@ interface Navigator {
 }
 
 interface Window {
-  getScreens(): any;
+  getScreenDetails(): any;
   isMultiScreen(): Promise<boolean>;
 }
+
+interface Screen {
+  isExtended: boolean;
+}
+
+// interface FullscreenOptions {
+//   screen?: Screen;
+// }
