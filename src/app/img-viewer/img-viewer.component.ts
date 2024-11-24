@@ -4,9 +4,10 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PresentationReceiverService } from '../slide-viewer/presentation-receiver.service';
 
 @Component({
-  selector: 'app-img-viewer',
-  templateUrl: './img-viewer.component.html',
-  styleUrls: ['./img-viewer.component.css']
+    selector: 'app-img-viewer',
+    templateUrl: './img-viewer.component.html',
+    styleUrls: ['./img-viewer.component.css'],
+    standalone: false
 })
 export class ImgViewerComponent implements OnInit {
   url: SafeResourceUrl;
