@@ -6,7 +6,7 @@ describe('ImgViewerService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: ImgViewerService = TestBed.get(ImgViewerService);
+    const service: ImgViewerService = TestBed.inject(ImgViewerService);
     expect(service).toBeTruthy();
   });
 });
